@@ -4,8 +4,6 @@ import type { createSelectedVariantStore } from "./SelectedVariantStore";
 import { getStore } from "./StoreManager";
 import { GridTileImage } from "./GridTileImage";
 
-await new Promise(resolve => setTimeout(resolve, 1000));
-
 export function ProductGallery(props: {
     product: products.Product,
     selectedVariantStoreId: string & ReturnType<typeof createSelectedVariantStore>

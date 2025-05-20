@@ -10,8 +10,6 @@ type Combination = {
   [key: string]: string | boolean;
 };
 
-await new Promise(resolve => setTimeout(resolve, 1000));
-
 export function VariantSelector(props: {
   product: products.Product,
   selectedVariantStoreId: string & ReturnType<typeof createSelectedVariantStore>

@@ -10,6 +10,14 @@ const toRender = Astro.slots.render("default", [storeId]);
 ---
 
 <cool-store data-id={storeId}></cool-store>
+<!-- <script is:inline define:vars={{ storeId }}>
+    window['kaki'] = window['kaki'] ?? {};
+    window['kaki'][storeId] = {
+        storeId,
+        initialState: {},
+        type: 'variant-store'
+    }
+</script> -->
 <script>
     import { createSelectedVariantStore } from "./SelectedVariantStore";
     import { addStore } from "./StoreManager";
