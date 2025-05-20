@@ -1,10 +1,10 @@
 ---
 import type { Product } from "../../lib/wix/types";
 import AddToCart from "../cart/add-to-cart.astro";
-import type { createSelectedVariantStore } from "../headless/SelectedVariantStore";
-import { VariantSelector } from "../headless/VariantSelector";
 import Price from "../price.astro";
 import Prose from "../prose.astro";
+import VariantSelector from "./variant-selector.astro";
+import type { createSelectedVariantStore } from "../headless/SelectedVariantStore";
 
 type Props = {
   product: Product;
@@ -24,7 +24,6 @@ type Props = {
 </div>
 
 <VariantSelector
-  client:load
   product={Astro.props.product.originalProduct}
   selectedVariantStoreId={Astro.props.selectedVariantStoreId}
 />

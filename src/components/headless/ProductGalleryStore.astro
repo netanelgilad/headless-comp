@@ -1,0 +1,29 @@
+---
+import { createProductGalleryStore, type ProductGalleryStoreInput } from "./ProductGalleryStore";
+import { addStore } from "./StoreManager";
+
+type Props = ProductGalleryStoreInput;
+
+const storeId = crypto.randomUUID();
+const productGalleryStore = createProductGalleryStore(Astro.props);
+addStore(storeId, productGalleryStore);
+
+const toRender = Astro.slots.render("default", [storeId]);
+---
+
+<product-gallery-store data-id={storeId} data-initial-state={JSON.stringify(Astro.props)}></product-gallery-store>
+<script>
+    import { createProductGalleryStore } from "./ProductGalleryStore";
+    import { addStore } from "./StoreManager";
+
+    class ProductGalleryStore extends HTMLElement {
+        constructor() {
+            super();
+            const productGalleryStore = createProductGalleryStore(JSON.parse(this.dataset.initialState!));
+            addStore(this.dataset.id!, productGalleryStore);
+        }
+    }
+
+    customElements.define("product-gallery-store", ProductGalleryStore);
+</script>
+<Fragment set:html={toRender} />
