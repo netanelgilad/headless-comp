@@ -1,14 +1,26 @@
-// @ts-check
 import { defineConfig } from "astro/config";
 import tailwind from "@astrojs/tailwind";
 import wix from "@wix/astro";
 import react from "@astrojs/react";
-import beforeHydrationDirective from "./astro-before-hydration-directive.js";
+
+function waitForStoreDirective() {
+  return {
+    name: "wait-for-store-directive",
+    hooks: {
+      "astro:config:setup": ({ addClientDirective }) => {
+        addClientDirective({
+          name: "wait-for-store",
+          entrypoint: "./src/directives/wait-for-store.js",
+        });
+      },
+    },
+  };
+}
 
 // https://astro.build/config
 export default defineConfig({
   output: "server",
-  integrations: [tailwind(), react(), beforeHydrationDirective()],
+  integrations: [tailwind(), react(), waitForStoreDirective()],
   adapter: wix(),
   image: {
     domains: ["static.wixstatic.com"],

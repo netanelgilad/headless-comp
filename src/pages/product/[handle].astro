@@ -49,7 +49,7 @@ const productJsonLd = {
       {
         (storeId: string) => (
           <div class="h-full w-full basis-full lg:basis-4/6">
-              <ProductGallery client:before-hydration={storeId} product={product.originalProduct} selectedVariantStoreId={storeId as string & ReturnType<typeof createSelectedVariantStore>} />
+              <ProductGallery client:wait-for-store={storeId} product={product.originalProduct} selectedVariantStoreId={storeId as string & ReturnType<typeof createSelectedVariantStore>} />
       </div>
 
       <div class="basis-full lg:basis-2/6">
