@@ -1,9 +1,7 @@
-export default async (load, opts, el) => {
-  await new Promise((resolve) => {
-    setTimeout(() => {
-      resolve();
-    }, 2000);
-  });
+import { waitForStore } from "../components/headless/StoreManager";
+
+export default async (load, { value: storeId }, el) => {
+  await waitForStore(storeId);
   const hydrate = await load();
   await hydrate();
 };
