@@ -24,8 +24,8 @@ type Props = {
 </div>
 
 <VariantSelector
-  client:load
   product={Astro.props.product.originalProduct}
+  client:wait-for-store={Astro.props.selectedVariantStoreId}
   selectedVariantStoreId={Astro.props.selectedVariantStoreId}
 />
 
