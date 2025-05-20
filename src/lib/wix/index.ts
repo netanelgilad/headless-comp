@@ -101,6 +101,7 @@ const reshapeCollections = (collections: collections.Collection[]) => {
 const reshapeProduct = (item: products.Product) => {
   return {
     id: item._id!,
+    originalProduct: item,
     title: item.name!,
     description: item.description!,
     descriptionHtml: item.description!,

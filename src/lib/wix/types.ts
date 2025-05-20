@@ -1,3 +1,5 @@
+import type { products } from "@wix/stores";
+
 export type Maybe<T> = T | null;
 
 export type Connection<T> = {
@@ -99,6 +101,7 @@ export type Product = {
   updatedAt: string;
   variants: ProductVariant[];
   images: Image[];
+  originalProduct: products.Product;
 };
 
 export type ProductOption = {

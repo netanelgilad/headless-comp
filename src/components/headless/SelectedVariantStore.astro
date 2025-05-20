@@ -1,0 +1,27 @@
+---
+import { createSelectedVariantStore } from "./SelectedVariantStore";
+import { addStore } from "./StoreManager";
+
+const storeId = crypto.randomUUID();
+const selectedVariantStore = createSelectedVariantStore({});
+addStore(storeId, selectedVariantStore);
+
+const toRender = Astro.slots.render("default", [storeId]);
+---
+
+<cool-store data-id={storeId}></cool-store>
+<script>
+    import { createSelectedVariantStore } from "./SelectedVariantStore";
+    import { addStore } from "./StoreManager";
+
+    class CoolStore extends HTMLElement {
+        constructor() {
+            super();
+            const selectedVariantStore = createSelectedVariantStore({});
+            addStore(this.dataset.id!, selectedVariantStore);
+        }
+    }
+
+    customElements.define("cool-store", CoolStore);
+</script>
+<Fragment set:html={toRender} />
