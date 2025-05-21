@@ -1,0 +1,24 @@
+---
+import { addStore } from "./StoreManager";
+
+
+const storeId = crypto.randomUUID();
+const storeSlug = Astro.props.storeSlug;
+const actualStore = Astro.props.storeFactory(Astro.props);
+const initialState = await actualStore?.init();
+addStore(storeId, actualStore);
+
+---
+
+<script is:inline define:vars={{
+    storeId,
+    storeSlug,
+    initialState,
+}}>
+    globalThis.StorageManager.getStoreFactory(storeSlug);
+    globalThis.StorageManager.addStore(storeId, actualStore);
+</script>
+
+<Fragment>
+    {Astro.slots.render("default", [storeId])}
+</Fragment>

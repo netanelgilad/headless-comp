@@ -1,7 +1,7 @@
 import { atom, computed, onMount } from "nanostores";
 import { products } from "@wix/stores";
 import type { createSelectedVariantStore } from "../VariantSelector/VariantSelectorStore";
-import { getStore } from "../StoreManager";
+import { getStore, registerStore } from "../StoreManager";
 
 export type ProductGalleryStoreInput = {
     media: NonNullable<products.Product['media']>,
@@ -59,3 +59,5 @@ export function createProductGalleryStore(input: ProductGalleryStoreInput) {
         getImageByIndex: (index: number) => media.items![index]
     }
 }
+
+registerStore("productGallery", createProductGalleryStore);
