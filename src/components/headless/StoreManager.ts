@@ -17,8 +17,8 @@ export function getStoreFactory(storeSlug: string) {
 
 const withStoreFactory = (storeSlug: string, handler: (manager: any, storeFactory: any) => void) => {
   console.log("withStoreFactory", storeSlug, handler);
-  const actualStore = getStoreFactory(storeSlug);
-  handler(manager, actualStore);
+  const actualStoreFactory = getStoreFactory(storeSlug);
+  handler(manager, actualStoreFactory);
 }
 
 const manager = {
