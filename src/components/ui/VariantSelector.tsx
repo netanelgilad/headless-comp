@@ -1,6 +1,8 @@
 import clsx from "clsx";
 import React from "react";
 import { ProductOptionChoice as ProductOptionChoiceHeadless } from "../headless/VariantSelector/VariantSelector";
+import { AddSelectedVariantToCart as AddSelectedVariantToCartHeadless } from "../headless/VariantSelector/VariantSelector";
+import PlusIcon from "./PlusIcon";
 
 export function ProductOptionChoice(props: Omit<React.ComponentProps<typeof ProductOptionChoiceHeadless>, 'children'>) {
     return (
@@ -44,3 +46,36 @@ export function ProductOptionChoice(props: Omit<React.ComponentProps<typeof Prod
         </ProductOptionChoiceHeadless>
     );
 } 
+
+export function AddSelectedVariantToCart(props: Omit<React.ComponentProps<typeof AddSelectedVariantToCartHeadless>, 'children'>) {
+    const buttonClasses =
+  "relative flex w-full items-center justify-center rounded-full bg-blue-600 p-4 tracking-wide text-white";
+const disabledClasses = "cursor-not-allowed opacity-60 hover:opacity-60";
+
+    return (
+        <AddSelectedVariantToCartHeadless
+            selectedVariantStoreId={props.selectedVariantStoreId}
+        >
+            {({ addSelectedVariantToCart, isAvailableForSale }) => (
+                !isAvailableForSale ? (
+                    <button disabled className={clsx(buttonClasses, disabledClasses)}>
+                      Out Of Stock
+                    </button>
+                  ) : (
+                    <button
+                      aria-label="Add to cart"
+                      className={clsx(buttonClasses, {
+                        "hover:opacity-90": true,
+                      })}
+                      onClick={addSelectedVariantToCart}
+                    >
+                      <div className="absolute left-0 ml-4">
+                        <PlusIcon className="h-5" />
+                      </div>
+                      Add To Cart
+                    </button>
+                  )
+            )}
+        </AddSelectedVariantToCartHeadless>
+    )
+}

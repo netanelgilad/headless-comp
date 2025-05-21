@@ -1,0 +1,53 @@
+---
+import { currentCart } from "@wix/ecom";
+import { addStore } from "../StoreManager";
+import { CurrentCartContext } from "./CurrentCartContext";
+import { createCurrentCartStore } from "./CurrentCartStore";
+
+type Props = {};
+
+const storeId = crypto.randomUUID();
+
+let initialCart:
+    | (currentCart.Cart & currentCart.CartNonNullableFields)
+    | undefined;
+try {
+    initialCart = await currentCart.getCurrentCart();
+} catch (e) {
+    if ((e as any).details.applicationError.code === "OWNED_CART_NOT_FOUND") {
+        initialCart = undefined;
+    } else {
+        throw e;
+    }
+}
+
+const initialState = {
+    initialCart,
+};
+
+const currentCartStore = createCurrentCartStore(initialState);
+addStore(storeId, currentCartStore);
+---
+
+<current-cart
+    data-id={storeId}
+    data-initial-state={JSON.stringify(initialState)}></current-cart>
+<script>
+    import { createCurrentCartStore } from "./CurrentCartStore";
+    import { addStore } from "../StoreManager";
+
+    class VariantSelector extends HTMLElement {
+        constructor() {
+            super();
+            const currentCartStore = createCurrentCartStore(
+                JSON.parse(this.dataset.initialState!),
+            );
+            addStore(this.dataset.id!, currentCartStore);
+        }
+    }
+
+    customElements.define("current-cart", VariantSelector);
+</script>
+<CurrentCartContext storeId={storeId}>
+    <slot />
+</CurrentCartContext>

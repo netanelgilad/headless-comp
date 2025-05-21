@@ -1,5 +1,10 @@
 import React from "react";
-import { ProductGallerySelectedImage as ProductGallerySelectedImagePrimitive, ProductGalleryThumbnail as ProductGalleryThumbnailPrimitive, NextProductImage as NextProductImagePrimitive, PreviousProductImage as PreviousProductImagePrimitive } from "../headless/ProductGallery/ProductGallery";
+import {
+    ProductGallerySelectedImage as ProductGallerySelectedImagePrimitive,
+    ProductGalleryThumbnail as ProductGalleryThumbnailPrimitive,
+    NextProductImage as NextProductImagePrimitive,
+    PreviousProductImage as PreviousProductImagePrimitive
+} from "../headless/ProductGallery/ProductGallery";
 import { GridTileImage } from "./GridTileImage";
 import type { products } from "@wix/stores";
 
@@ -58,8 +63,8 @@ export const NextProductImage = (props: Omit<React.ComponentProps<typeof NextPro
         {...props}
     >
         {(nextImage: () => void) => (
-            <button aria-label="Next product image" 
-                className="h-full px-6 transition-all ease-in-out hover:scale-110 hover:text-black dark:hover:text-white flex items-center justify-center" 
+            <button aria-label="Next product image"
+                className="h-full px-6 transition-all ease-in-out hover:scale-110 hover:text-black dark:hover:text-white flex items-center justify-center"
                 onClick={nextImage}
             >
                 <label>
@@ -90,8 +95,8 @@ export const PreviousProductImage = (props: Omit<React.ComponentProps<typeof Pre
         {...props}
     >
         {(previousImage: () => void) => (
-            <button aria-label="Previous product image" 
-                className="h-full px-6 transition-all ease-in-out hover:scale-110 hover:text-black dark:hover:text-white flex items-center justify-center" 
+            <button aria-label="Previous product image"
+                className="h-full px-6 transition-all ease-in-out hover:scale-110 hover:text-black dark:hover:text-white flex items-center justify-center"
                 onClick={previousImage}
             >
                 <label>

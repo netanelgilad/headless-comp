@@ -1,5 +1,6 @@
 ---
 import { ClientRouter } from "astro:transitions";
+import CurrentCartStore from "../headless/CurrentCart/CurrentCartStore.astro";
 import "./globals.css";
 import Navbar from "./navbar/index.astro";
 ---
@@ -16,7 +17,9 @@ import Navbar from "./navbar/index.astro";
   >
     <Navbar />
     <main>
-      <slot />
+      <CurrentCartStore>
+        <slot />
+      </CurrentCartStore>
     </main>
   </body>
 </html>

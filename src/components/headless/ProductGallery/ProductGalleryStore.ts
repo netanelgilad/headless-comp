@@ -10,9 +10,9 @@ export type ProductGalleryStoreInput = {
 
 export function createProductGalleryStore(input: ProductGalleryStoreInput) {
     const { media, selectedVariantStoreId } = input;
-    const { input: selectedVariantStoreInput } = getStore(selectedVariantStoreId);
     const $imageIndex = atom<number>(0);
-
+    
+    const { input: selectedVariantStoreInput } = getStore(selectedVariantStoreId);
     onMount($imageIndex, () => {
         return getStore(selectedVariantStoreId).$selectedOptions.subscribe(selectedOptions => {
             Object.entries(selectedOptions).find(([key, value]) => {
@@ -27,7 +27,6 @@ export function createProductGalleryStore(input: ProductGalleryStoreInput) {
 
                     if (optionChoice) {
                         const imageIndex = media?.items!.findIndex(productImage => {
-                            console.log('comparing', productImage._id, optionChoice.media?.mainMedia?._id);
                             return productImage._id === optionChoice.media?.mainMedia?._id
                         }
                         );

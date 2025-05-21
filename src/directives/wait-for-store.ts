@@ -1,8 +1,7 @@
 import type { ClientDirective } from "astro";
 
 export default <ClientDirective>(async (load, { value: storeId }) => {
-  await waitForStore(storeId);
-  const hydrate = await load();
+  const [hydrate] = await Promise.all([load(), waitForStore(storeId)]);
   await hydrate();
 });
 

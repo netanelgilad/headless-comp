@@ -73,7 +73,7 @@ export function ProductOptionChoice(props: {
   });
 }
 
-function getVariants(product: SelectedVariantStoreInput) {
+export function getVariants(product: SelectedVariantStoreInput) {
   return product.manageVariants
     ? product.variants?.map((variant) => ({
       id: variant._id!,
@@ -120,3 +120,19 @@ function cartesian<T>(data: T[][]) {
     [],
   ] as T[][]);
 } 
+
+export function AddSelectedVariantToCart(props: {
+  selectedVariantStoreId: string & ReturnType<typeof createSelectedVariantStore>,
+  children: (params: {
+    addSelectedVariantToCart: () => void
+    isAvailableForSale: boolean
+  }) => React.ReactNode
+}) {
+  const {  addSelectedVariantToCart, $isAvailableForSale } = getStore(props.selectedVariantStoreId);
+  const isAvailableForSale = useStore($isAvailableForSale);
+
+  return props.children({
+    addSelectedVariantToCart,
+    isAvailableForSale: isAvailableForSale ?? false
+  })
+}
