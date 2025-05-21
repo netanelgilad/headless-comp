@@ -10,17 +10,14 @@ import GenericStore from "../GenericStore.astro";
 type Props = Omit<ProductGalleryStoreInput, "selectedVariantStoreId">;
 
 const selectedVariantStoreId = getSelectedVariantStoreId();
-const input = {
-    ...Astro.props,
-    selectedVariantStoreId,
-};
 
 ---
 
 <GenericStore
     storeSlug="productGallery"
     storeFactory={createProductGalleryStore}
-    dependantStoreIds={[selectedVariantStoreId]}>
+    dependantStoreIds={{ selectedVariantStoreId }}
+    {...Astro.props}>
     {(storeId: string) =>
         <ProductGalleryContext storeId={storeId}>
             {Astro.slots.render("default", [storeId])}

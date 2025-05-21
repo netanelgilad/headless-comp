@@ -15,9 +15,26 @@ export function getStoreFactory(storeSlug: string) {
   return (globalThis as any).storeFactories?.[storeSlug];
 }
 
-(globalThis as any).StorageManager = {
+const withStoreFactory = (storeSlug: string, handler: (manager: any, storeFactory: any) => void) => {
+  console.log("withStoreFactory", storeSlug, handler);
+  const actualStore = getStoreFactory(storeSlug);
+  handler(manager, actualStore);
+}
+
+const manager = {
   addStore,
   getStore,
   registerStore,
   getStoreFactory,
-};
+  withStoreFactory,
+}
+
+if ((globalThis as any).StoreManager && Array.isArray((globalThis as any).StoreManager.withStoreFactory)) {
+  (globalThis as any).StoreManager.withStoreFactory.forEach((args: any[]) => {
+    // @ts-expect-error
+    withStoreFactory(...args);
+  });
+}
+
+
+(globalThis as any).StoreManager = manager;

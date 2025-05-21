@@ -8,13 +8,15 @@ export type ProductGalleryStoreInput = {
     selectedVariantStoreId: string & ReturnType<typeof createSelectedVariantStore>
 };
 
-export function createProductGalleryStore(input: ProductGalleryStoreInput) {
-    const { media, selectedVariantStoreId } = input;
+export function createProductGalleryStore(input: any) {
+    console.log("createProductGalleryStore", input);
+    debugger;
+    const { media } = input;
     const $imageIndex = atom<number>(0);
     
-    const { input: selectedVariantStoreInput } = getStore(selectedVariantStoreId);
+    const { input: selectedVariantStoreInput } = getStore(input.dependantStoreIds.selectedVariantStoreId);
     onMount($imageIndex, () => {
-        return getStore(selectedVariantStoreId).$selectedOptions.subscribe(selectedOptions => {
+        return getStore(input.dependantStoreIds.selectedVariantStoreId).$selectedOptions.subscribe(selectedOptions => {
             Object.entries(selectedOptions).find(([key, value]) => {
                 const productOption = selectedVariantStoreInput.productOptions!.find(productOption => productOption.name === key);
 

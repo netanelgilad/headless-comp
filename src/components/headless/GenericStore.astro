@@ -5,7 +5,7 @@ import { addStore } from "./StoreManager";
 const storeId = crypto.randomUUID();
 const storeSlug = Astro.props.storeSlug;
 const actualStore = Astro.props.storeFactory(Astro.props);
-const initialState = await actualStore?.init();
+const initialState = actualStore.init ? await actualStore?.init() : {};
 addStore(storeId, actualStore);
 
 ---
@@ -15,8 +15,25 @@ addStore(storeId, actualStore);
     storeSlug,
     initialState,
 }}>
-    globalThis.StorageManager.getStoreFactory(storeSlug);
-    globalThis.StorageManager.addStore(storeId, actualStore);
+    console.log("GenericStore", storeId, storeSlug);
+    globalThis.StoreManager = globalThis.StoreManager ?? {};
+    console.log("globalThis.StoreManager", globalThis.StoreManager);
+
+    if (typeof globalThis.StoreManager.withStoreFactory === "function") {
+        globalThis.StoreManager.withStoreFactory(storeSlug, (manager, storeFactory) => {
+            manager.addStore(storeId, actualStore);
+        });
+    } else if (Array.isArray(globalThis.StorageManager.withStoreFactory)) {
+        globalThis.StorageManager.withStoreFactory.push([storeSlug, (manager, storeFactory) => {
+            manager.addStore(storeId, actualStore);
+        }]);
+    } else {
+        globalThis.StorageManager.withStoreFactory = [storeSlug, (manager, storeFactory) => {
+            manager.addStore(storeId, actualStore);
+        }];
+    }
+
+    console.log("globalThis.StoreManager end", globalThis.StoreManager, globalThis.StorageManager.withStoreFactory);
 </script>
 
 <Fragment>
