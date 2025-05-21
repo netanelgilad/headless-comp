@@ -1,5 +1,5 @@
 import { useStore } from "@nanostores/react";
-import type { createProductGalleryStore } from "./ProductGalleryStore";
+import type { createProductGalleryStore } from "../stores/ProductGalleryStore";
 import { getStore } from "../StoreManager";
 import type { products } from "@wix/stores";
 

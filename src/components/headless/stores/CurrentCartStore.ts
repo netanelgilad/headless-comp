@@ -1,6 +1,6 @@
-
 import { currentCart } from "@wix/ecom";
 import { atom, computed } from "nanostores";
+import { registerStore } from "../StoreManager";
 
 export function createCurrentCartStore(opts: {
     initialCart: currentCart.Cart & currentCart.CartNonNullableFields | undefined,
@@ -55,3 +55,5 @@ export function createCurrentCartStore(opts: {
         },
     }
 }
+
+registerStore("currentCart", createCurrentCartStore);

@@ -1,5 +1,5 @@
 import { products } from "@wix/stores";
-import type { createSelectedVariantStore, SelectedVariantStoreInput } from "./VariantSelectorStore";
+import type { createSelectedVariantStore, SelectedVariantStoreInput } from "../stores/SelectedVariantStore";
 import { useStore } from "@nanostores/react";
 import { getStore } from "../StoreManager";
 
