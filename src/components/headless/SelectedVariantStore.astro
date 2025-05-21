@@ -1,6 +1,7 @@
 ---
 import type { SelectedVariantStoreInput } from "./SelectedVariantStore";
 import { createSelectedVariantStore } from "./SelectedVariantStore";
+import { SelectedVariantStoreContext } from "./SelectedVariantStoreContext";
 import { addStore } from "./StoreManager";
 
 type Props = SelectedVariantStoreInput;
@@ -8,11 +9,11 @@ type Props = SelectedVariantStoreInput;
 const storeId = crypto.randomUUID();
 const selectedVariantStore = createSelectedVariantStore(Astro.props);
 addStore(storeId, selectedVariantStore);
-
-const toRender = Astro.slots.render("default", [storeId]);
 ---
 
-<selected-variant-store data-id={storeId} data-initial-state={JSON.stringify(Astro.props)}></selected-variant-store>
+<selected-variant-store
+    data-id={storeId}
+    data-initial-state={JSON.stringify(Astro.props)}></selected-variant-store>
 <script>
     import { createSelectedVariantStore } from "./SelectedVariantStore";
     import { addStore } from "./StoreManager";
@@ -20,11 +21,15 @@ const toRender = Astro.slots.render("default", [storeId]);
     class SelectedVariantStore extends HTMLElement {
         constructor() {
             super();
-            const selectedVariantStore = createSelectedVariantStore(JSON.parse(this.dataset.initialState!));
+            const selectedVariantStore = createSelectedVariantStore(
+                JSON.parse(this.dataset.initialState!),
+            );
             addStore(this.dataset.id!, selectedVariantStore);
         }
     }
 
     customElements.define("selected-variant-store", SelectedVariantStore);
 </script>
-<Fragment set:html={toRender} />
+<SelectedVariantStoreContext storeId={storeId}>
+    <slot />
+</SelectedVariantStoreContext>

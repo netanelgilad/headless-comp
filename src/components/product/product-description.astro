@@ -4,12 +4,9 @@ import AddToCart from "../cart/add-to-cart.astro";
 import Price from "../price.astro";
 import Prose from "../prose.astro";
 import VariantSelector from "./variant-selector.astro";
-import type { createSelectedVariantStore } from "../headless/SelectedVariantStore";
 
 type Props = {
   product: Product;
-  selectedVariantStoreId: string &
-    ReturnType<typeof createSelectedVariantStore>;
 };
 ---
 
@@ -25,7 +22,6 @@ type Props = {
 
 <VariantSelector
   product={Astro.props.product.originalProduct}
-  selectedVariantStoreId={Astro.props.selectedVariantStoreId}
 />
 
 {

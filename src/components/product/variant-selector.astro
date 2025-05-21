@@ -1,12 +1,10 @@
 ---
 import type { products } from "@wix/stores";
 import { ProductOptionChoice } from "../ui/ProductOptionChoice";
-import type { createSelectedVariantStore } from "../headless/SelectedVariantStore";
+import { getSelectedVariantStoreId } from "../headless/SelectedVariantStoreContext";
 
 type Props = {
   product: products.Product;
-  selectedVariantStoreId: string &
-    ReturnType<typeof createSelectedVariantStore>;
 };
 
 const productOptions = Astro.props.product.productOptions;
@@ -27,10 +25,10 @@ if (hasNoOptionsOrJustOneOption) {
       <dd class="flex flex-wrap gap-3">
         {option.choices?.map((choice) => (
           <ProductOptionChoice
-            client:load
+            client:wait-for-store={getSelectedVariantStoreId()}
             option={option}
             choice={choice}
-            selectedVariantStoreId={Astro.props.selectedVariantStoreId}
+            selectedVariantStoreId={getSelectedVariantStoreId()}
           />
         ))}
       </dd>

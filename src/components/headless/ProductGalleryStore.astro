@@ -1,17 +1,27 @@
 ---
-import { createProductGalleryStore, type ProductGalleryStoreInput } from "./ProductGalleryStore";
+import { ProductGalleryContext } from "./ProductGalleryContext";
+import {
+    createProductGalleryStore,
+    type ProductGalleryStoreInput,
+} from "./ProductGalleryStore";
+import { getSelectedVariantStoreId } from "./SelectedVariantStoreContext";
 import { addStore } from "./StoreManager";
 
-type Props = ProductGalleryStoreInput;
+type Props = Omit<ProductGalleryStoreInput, "selectedVariantStoreId">;
 
 const storeId = crypto.randomUUID();
-const productGalleryStore = createProductGalleryStore(Astro.props);
+const selectedVariantStoreId = getSelectedVariantStoreId();
+const input = {
+    ...Astro.props,
+    selectedVariantStoreId,
+};
+const productGalleryStore = createProductGalleryStore(input);
 addStore(storeId, productGalleryStore);
-
-const toRender = Astro.slots.render("default", [storeId]);
 ---
 
-<product-gallery-store data-id={storeId} data-initial-state={JSON.stringify(Astro.props)}></product-gallery-store>
+<product-gallery-store
+    data-id={storeId}
+    data-initial-state={JSON.stringify(input)}></product-gallery-store>
 <script>
     import { createProductGalleryStore } from "./ProductGalleryStore";
     import { addStore } from "./StoreManager";
@@ -19,11 +29,15 @@ const toRender = Astro.slots.render("default", [storeId]);
     class ProductGalleryStore extends HTMLElement {
         constructor() {
             super();
-            const productGalleryStore = createProductGalleryStore(JSON.parse(this.dataset.initialState!));
+            const productGalleryStore = createProductGalleryStore(
+                JSON.parse(this.dataset.initialState!),
+            );
             addStore(this.dataset.id!, productGalleryStore);
         }
     }
 
     customElements.define("product-gallery-store", ProductGalleryStore);
 </script>
-<Fragment set:html={toRender} />
+<ProductGalleryContext storeId={storeId}>
+    {Astro.slots.render("default", [storeId])}
+</ProductGalleryContext>

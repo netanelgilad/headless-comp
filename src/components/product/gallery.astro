@@ -1,32 +1,21 @@
 ---
 import type { products } from "@wix/stores";
-import { NextProductImage } from "../headless/NextProductImage";
-import { PreviousProductImage } from "../headless/PreviousProductImage";
-import {
-  ProductGallerySelectedImage,
-  ProductGalleryThumbnail,
-} from "../headless/ProductGallery";
 import type { createProductGalleryStore } from "../headless/ProductGalleryStore";
 import ProductGalleryStore from "../headless/ProductGalleryStore.astro";
-import type { createSelectedVariantStore } from "../headless/SelectedVariantStore";
+import {NextProductImage, PreviousProductImage, ProductGallerySelectedImage, ProductGalleryThumbnail} from "../ui/ProductGallary";
 
 type Props = {
   media: NonNullable<products.Product["media"]>;
-  selectedVariantStoreId: string &
-    ReturnType<typeof createSelectedVariantStore>;
 };
 ---
 
-<ProductGalleryStore
-  media={Astro.props.media}
-  selectedVariantStoreId={Astro.props.selectedVariantStoreId}
->
+<ProductGalleryStore media={Astro.props.media}>
   {
     (storeId: string) => (
       <>
         <div class="relative aspect-square h-full max-h-[550px] w-full overflow-hidden">
           <ProductGallerySelectedImage
-            client:load
+            client:wait-for-store={storeId}
             productGalleryStoreId={
               storeId as string & ReturnType<typeof createProductGalleryStore>
             }
@@ -36,7 +25,7 @@ type Props = {
             <div class="absolute bottom-[15%] flex w-full justify-center">
               <div class="mx-auto flex h-11 items-center rounded-full border border-white bg-neutral-50/80 text-neutral-500 backdrop-blur dark:border-black dark:bg-neutral-900/80">
                 <PreviousProductImage
-                  client:load
+                  client:wait-for-store={storeId}
                   productGalleryStoreId={
                     storeId as string &
                       ReturnType<typeof createProductGalleryStore>
@@ -44,7 +33,7 @@ type Props = {
                 />
                 <div class="mx-1 h-6 w-px bg-neutral-500" />
                 <NextProductImage
-                  client:load
+                  client:wait-for-store={storeId}
                   productGalleryStoreId={
                     storeId as string &
                       ReturnType<typeof createProductGalleryStore>
@@ -59,7 +48,7 @@ type Props = {
           <ul class="my-12 flex items-center justify-center gap-2 overflow-auto py-1 lg:mb-0">
             {Astro.props.media.items!.map((_, index) => (
               <ProductGalleryThumbnail
-                client:load
+                client:wait-for-store={storeId}
                 index={index}
                 productGalleryStoreId={
                   storeId as string &

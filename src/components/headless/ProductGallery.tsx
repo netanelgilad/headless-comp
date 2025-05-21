@@ -1,61 +1,52 @@
 import { useStore } from "@nanostores/react";
-import { GridTileImage } from "./GridTileImage";
 import type { createProductGalleryStore } from "./ProductGalleryStore";
 import { getStore } from "./StoreManager";
+import type { products } from "@wix/stores";
 
-await new Promise(resolve => setTimeout(resolve, 1000))
-
-export function ProductGallerySelectedImage(props: {
-    productGalleryStoreId: string & ReturnType<typeof createProductGalleryStore>
-}) {
+export const ProductGallerySelectedImage = (props: {
+    productGalleryStoreId: string & ReturnType<typeof createProductGalleryStore>,
+    children: (selectedImage: products.MediaItem) => React.ReactNode
+}) => {
     const { $selectedImage } = getStore(props.productGalleryStoreId);
     const selectedImage = useStore($selectedImage);
 
     return (
-        selectedImage && (
-            <img
-                className="h-full w-full object-contain"
-                sizes="(min-width: 1024px) 66vw, 100vw"
-                loading={"eager"}
-                alt={selectedImage.image?.altText!}
-                src={selectedImage.image?.url}
-            />
-        )
+        selectedImage && (props.children(selectedImage))
     )
 }
+ProductGallerySelectedImage.displayName = "ProductGallerySelectedImage";
 
 export function ProductGalleryThumbnail(props: {
     index: number,
-    productGalleryStoreId: string & ReturnType<typeof createProductGalleryStore>
+    productGalleryStoreId: string & ReturnType<typeof createProductGalleryStore>,
+    children: (image: products.MediaItem, isActive: boolean, selectImage: () => void) => React.ReactNode
 }) {
     const { $imageIndex, selectImage, getImageByIndex } = getStore(props.productGalleryStoreId);
     const imageIndex = useStore($imageIndex);
 
     const isActive = imageIndex === props.index;
+    const image = getImageByIndex(props.index)!;
+    const handleSelectImage = () => selectImage(props.index);
 
-    return (
-        <li className="h-20 w-20">
-            <input
-                type="radio"
-                name="image"
-                form="view-selections"
-                onChange={() => selectImage(props.index)}
-                checked={isActive}
-                value={props.index}
-                aria-label="Select product image"
-                className="hidden peer"
-            />
-            <label>
-                <span className="sr-only">View product image {props.index + 1}</span>
-                <GridTileImage
-                    alt={getImageByIndex(props.index)!.image!.altText!}
-                    src={getImageByIndex(props.index)!.image!.url!}
-                    width={80}
-                    height={80}
-                    active={isActive}
-                    loading="eager"
-                />
-            </label>
-        </li>
-    );
+    return props.children(image, isActive, handleSelectImage);
+}
+
+export function NextProductImage(props: {
+    productGalleryStoreId: string & ReturnType<typeof createProductGalleryStore>,
+    children: (nextImage: () => void) => React.ReactNode
+}) {
+    const productGalleryStore = getStore(props.productGalleryStoreId);
+    const handleNextImage = () => productGalleryStore.nextImage();
+
+    return props.children(handleNextImage);
+}
+
+export function PreviousProductImage(props: {
+    productGalleryStoreId: string & ReturnType<typeof createProductGalleryStore>,
+    children: (previousImage: () => void) => React.ReactNode
+}) {
+    const productGalleryStore = getStore(props.productGalleryStoreId);
+    const handlePreviousImage = () => productGalleryStore.previousImage();
+
+    return props.children(handlePreviousImage);
 }

@@ -1,64 +1,58 @@
-import type { AstroGlobal } from 'astro';
+/**
+ * Creates a context that can be used in Astro components.
+ * This function uses generics to allow any type `T` to be used as the context value.
+ *
+ * @returns A tuple containing the Provider component and a getter function for the current context.
+ */
+export const createContext = <T extends any>() => {
+	// initialize context casted to type `T`.
+	let context: T
 
-declare global {
-    export namespace App {
-        export interface Locals {
-            [key: string]: any;
-        }
-    }
-}
+	/**
+	 * Provider component for the context.
+	 * This component sets the context value and provides it to its children components.
+	 */
+	function Provider(
+		/** Result parameter (not used in this implementation). */
+		_result: any,
+		/** Props passed to the Provider, used as the new context value. */
+		props: any,
+		/** Slot(s) containing the children components. */
+		slots: any
+	) {
+		// overwrite props with a deep clone itself
+		// avoid unintended side-effects caused by shared references
+		props = structuredClone(props)
 
-type ContextAstro = AstroGlobal | {
-    request: Request,
-    locals: any,
-    props: any;
-};
+		return {
+			/* Symbol indicating this is an Astro component object. */
+			[Symbol.toStringTag]: 'AstroComponent',
+			async *[Symbol.asyncIterator]() {
+				// set context to the value provided by props
+				// ensure a deep clone of the provided value
+				// avoid unintended side-effects caused by shared references
+				context = structuredClone(props)
 
-type ContextHistory = {
-    history: any[],
-    lock: Map<string, Promise<void>>;
-};
+				// yield rendered children components
+				yield await slots.default()
 
-function getAMContextFromAstro(astro: ContextAstro, name: string): ContextHistory {
-    const amContext = astro.locals.amContext ??= new Map();
+				// reset context to undefined after rendering is complete
+				context = undefined as T
+			},
+		}
+	}
 
-    const namedContext = amContext.get(name) ?? {
-        history: [],
-        lock: new Map(),
-    };
+	/* Flag indicating this is an Astro component factory function. */
+	Provider.isAstroComponentFactory = true
 
-    amContext.set(name, namedContext);
-    return namedContext;
-}
-
-export default function getContext(astro: ContextAstro, name = "default") {
-    const contexts = getAMContextFromAstro(astro, name);
-    return contexts.history.at(-1) ?? {};
-}
-
-type AsyncContextOptions = { name?: string | undefined, context?: any, lock?: string | undefined; };
-
-export async function asyncContext<T>(promise: () => Promise<T>, astro: ContextAstro, { name = "default", context = null, lock }: AsyncContextOptions = {}): Promise<T> {
-    const contextState = getAMContextFromAstro(astro, name);
-
-    while (contextState.lock.get(lock!)) {
-        await contextState.lock.get(lock!);
-    }
-
-    contextState.history.push({
-        ...contextState.history.at(-1),
-        ...(context ?? astro.props)
-    });
-
-    let resolver: () => void | null;
-    if (lock) contextState.lock.set(lock, new Promise<void>(resolve => resolver = resolve));
-
-    try {
-        return await promise();
-    } finally {
-        contextState.history.pop();
-        contextState.lock.delete(lock!);
-        // @ts-expect-error
-        resolver?.();
-    }
+	// return a tuple of Provider component and a getter function for the current context
+	return [
+		Provider,
+		() => context,
+	] as any as [
+		/** Provider component for context. */
+		(props: T) => any,
+		/** Returns the current context. */
+		() => T
+	]
 }

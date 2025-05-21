@@ -3,8 +3,6 @@ import type { createSelectedVariantStore, SelectedVariantStoreInput } from "./Se
 import { useStore } from "@nanostores/react";
 import { getStore } from "./StoreManager";
 
-await new Promise(resolve => setTimeout(resolve, 1000));
-
 type Combination = {
     id: string;
     availableForSale: boolean;
