@@ -3,9 +3,9 @@ import { ProductGalleryContext } from "./ProductGalleryContext";
 import {
     createProductGalleryStore,
     type ProductGalleryStoreInput,
-} from "./ProductGalleryStore";
-import { getSelectedVariantStoreId } from "./SelectedVariantStoreContext";
-import { addStore } from "./StoreManager";
+} from "../ProductGallery/ProductGalleryStore";
+import { getSelectedVariantStoreId } from "../VariantSelector/VariantSelectorContext";
+import { addStore } from "../StoreManager";
 
 type Props = Omit<ProductGalleryStoreInput, "selectedVariantStoreId">;
 
@@ -24,7 +24,7 @@ addStore(storeId, productGalleryStore);
     data-initial-state={JSON.stringify(input)}></product-gallery-store>
 <script>
     import { createProductGalleryStore } from "./ProductGalleryStore";
-    import { addStore } from "./StoreManager";
+    import { addStore } from "../StoreManager";
 
     class ProductGalleryStore extends HTMLElement {
         constructor() {

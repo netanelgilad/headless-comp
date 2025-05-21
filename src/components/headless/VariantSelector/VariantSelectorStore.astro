@@ -1,0 +1,35 @@
+---
+import type { SelectedVariantStoreInput } from "./VariantSelectorStore";
+import { createSelectedVariantStore } from "./VariantSelectorStore";
+import { SelectedVariantStoreContext } from "./VariantSelectorContext";
+import { addStore } from "../StoreManager";
+
+type Props = SelectedVariantStoreInput;
+
+const storeId = crypto.randomUUID();
+const selectedVariantStore = createSelectedVariantStore(Astro.props);
+addStore(storeId, selectedVariantStore);
+---
+
+<variant-selector
+    data-id={storeId}
+    data-initial-state={JSON.stringify(Astro.props)}></variant-selector>
+<script>
+    import { createSelectedVariantStore } from "./VariantSelectorStore";
+    import { addStore } from "../StoreManager";
+
+    class VariantSelector extends HTMLElement {
+        constructor() {
+            super();
+            const selectedVariantStore = createSelectedVariantStore(
+                JSON.parse(this.dataset.initialState!),
+            );
+            addStore(this.dataset.id!, selectedVariantStore);
+        }
+    }
+
+    customElements.define("variant-selector", VariantSelector);
+</script>
+<SelectedVariantStoreContext storeId={storeId}>
+    <slot />
+</SelectedVariantStoreContext>

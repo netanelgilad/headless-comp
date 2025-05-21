@@ -1,7 +1,7 @@
 import { atom, computed, onMount } from "nanostores";
 import { products } from "@wix/stores";
-import type { createSelectedVariantStore } from "./SelectedVariantStore";
-import { getStore } from "./StoreManager";
+import type { createSelectedVariantStore } from "../VariantSelector/VariantSelectorStore";
+import { getStore } from "../StoreManager";
 
 export type ProductGalleryStoreInput = {
     media: NonNullable<products.Product['media']>,

@@ -1,5 +1,5 @@
-import { createContext } from "./Context";
-import type { createSelectedVariantStore } from "./SelectedVariantStore";
+import { createContext } from "../Context";
+import type { createSelectedVariantStore } from "./VariantSelectorStore";
 
 const [ Provider, getContext ] = createContext<{ storeId: string }>()
 

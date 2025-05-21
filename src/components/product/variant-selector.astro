@@ -1,7 +1,7 @@
 ---
 import type { products } from "@wix/stores";
-import { ProductOptionChoice } from "../ui/ProductOptionChoice";
-import { getSelectedVariantStoreId } from "../headless/SelectedVariantStoreContext";
+import { ProductOptionChoice } from "../ui/VariantSelector";
+import { getSelectedVariantStoreId } from "../headless/VariantSelector/VariantSelectorContext";
 
 type Props = {
   product: products.Product;

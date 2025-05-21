@@ -1,6 +1,6 @@
 import { useStore } from "@nanostores/react";
 import type { createProductGalleryStore } from "./ProductGalleryStore";
-import { getStore } from "./StoreManager";
+import { getStore } from "../StoreManager";
 import type { products } from "@wix/stores";
 
 export const ProductGallerySelectedImage = (props: {

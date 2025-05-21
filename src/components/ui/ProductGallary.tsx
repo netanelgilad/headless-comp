@@ -1,6 +1,6 @@
 import React from "react";
-import { ProductGallerySelectedImage as ProductGallerySelectedImagePrimitive, ProductGalleryThumbnail as ProductGalleryThumbnailPrimitive, NextProductImage as NextProductImagePrimitive, PreviousProductImage as PreviousProductImagePrimitive } from "../headless/ProductGallery";
-import { GridTileImage } from "../headless/GridTileImage";
+import { ProductGallerySelectedImage as ProductGallerySelectedImagePrimitive, ProductGalleryThumbnail as ProductGalleryThumbnailPrimitive, NextProductImage as NextProductImagePrimitive, PreviousProductImage as PreviousProductImagePrimitive } from "../headless/ProductGallery/ProductGallery";
+import { GridTileImage } from "./GridTileImage";
 import type { products } from "@wix/stores";
 
 export const ProductGallerySelectedImage = (props: Omit<React.ComponentProps<typeof ProductGallerySelectedImagePrimitive>, 'children'>) => (
