@@ -20,18 +20,20 @@ addStore(storeId, actualStore);
     globalThis.StoreManager = globalThis.StoreManager ?? {};
 
     const hydrateStore = (manager, storeFactory) => {
+        console.log(`GenericStore: hydrateStore`, storeId, storeSlug, initialState);
         const actualStore = storeFactory(initialState);
         manager.addStore(storeId, actualStore);
     };
 
     if (typeof globalThis.StoreManager.withStoreFactory === "function") {
         globalThis.StoreManager.withStoreFactory(storeSlug, hydrateStore);
-    } else if (Array.isArray(globalThis.StoreManager.withStoreFactory)) {
+    } else if (Array.isArray(globalThis.StoreManager.whenStoreFactoryReady)) {
         globalThis.StoreManager.whenStoreFactoryReady.push([storeSlug, hydrateStore]);
     } else {
         globalThis.StoreManager.whenStoreFactoryReady = [[storeSlug, hydrateStore]];
     }
 
+    console.log(`GenericStore: StoreManager`, globalThis.StoreManager);
 </script>
 <script>
     function capitalize(str: string) {
@@ -41,6 +43,7 @@ addStore(storeId, actualStore);
     if (Array.isArray(globalThis.StoreManager.whenStoreFactoryReady)) {
         globalThis.StoreManager.whenStoreFactoryReady.forEach(([storeSlug]) => {
             // We'll have a convetion for the store location?
+            console.log(`GenericStore: import`, `./ProductGallery/${capitalize(storeSlug)}Store.ts`);
             import(`./ProductGallery/${capitalize(storeSlug)}Store.ts`);
         });
     }

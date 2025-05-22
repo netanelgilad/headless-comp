@@ -7,17 +7,16 @@ import {
 import { getSelectedVariantStoreId } from "../VariantSelector/VariantSelectorContext";
 import GenericStore from "../GenericStore.astro";
 
-type Props = Omit<ProductGalleryStoreInput, "selectedVariantStoreId">;
+type Props = Omit<ProductGalleryStoreInput, "dependantStoreIds">;
 
 const selectedVariantStoreId = getSelectedVariantStoreId();
-
 ---
 
 <GenericStore
+    {...Astro.props}
     storeSlug="productGallery"
     storeFactory={createProductGalleryStore}
-    dependantStoreIds={{ selectedVariantStoreId }}
-    {...Astro.props}>
+    dependantStoreIds={{ selectedVariantStoreId }}>
     {(storeId: string) =>
         <ProductGalleryContext storeId={storeId}>
             {Astro.slots.render("default", [storeId])}

@@ -3,10 +3,12 @@ export function addStore(storeId: string, something: unknown) {
   globalThis.stores[storeId] = something;
 }
 export function getStore<R>(storeId: string & R): R {
+  console.log('getStore', storeId, globalThis.stores?.[storeId]);
   return globalThis.stores?.[storeId] as R;
 }
 
 export function registerStore(storeSlug: string, storeFactory: (...args: any[]) => any) {
+  console.log('registerStore', storeSlug, storeFactory);
   globalThis.storeFactories = globalThis.storeFactories ?? {};
   globalThis.storeFactories[storeSlug] = storeFactory;
   executeWhenReady();
@@ -17,6 +19,7 @@ export function getStoreFactory(storeSlug: string) {
 }
 
 const withStoreFactory = (storeSlug: string, handler: (manager: StoreManagerType, storeFactory: Function) => void) => {
+  console.log('withStoreFactory', storeSlug, handler);
   const actualStoreFactory = getStoreFactory(storeSlug);
   if (actualStoreFactory) {
     handler(manager, actualStoreFactory);
@@ -38,9 +41,10 @@ interface StoreManagerType {
   getStoreFactory: typeof getStoreFactory;
   withStoreFactory: typeof withStoreFactory;
 }
- 
+
+type StoreFactoryReadyItem = [string, (manager: StoreManagerType, storeFactory: Function) => void];
 interface StoreManagerTypeHooks {
-  whenStoreFactoryReady?: [string, (manager: StoreManagerType, storeFactory: Function) => void][];
+  whenStoreFactoryReady?: Array<StoreFactoryReadyItem>;
 }
 
 
@@ -53,15 +57,21 @@ declare global {
 
 function executeWhenReady() {
   if (globalThis.StoreManager && Array.isArray(globalThis.StoreManager.whenStoreFactoryReady)) {
-    const includeFilter = ([storeSlug, _]: [string, (manager: StoreManagerType, storeFactory: Function) => void]) => !!globalThis.storeFactories?.[storeSlug];
-    const whenReadyAndSlugIsHere = globalThis.StoreManager.whenStoreFactoryReady.filter(includeFilter);
+    const includeFilter = (item: StoreFactoryReadyItem): boolean => {
+      const [storeSlug] = item;
+      return !!globalThis.storeFactories?.[storeSlug];
+    };
+    
+    const whenReadyAndSlugIsHere = globalThis.StoreManager.whenStoreFactoryReady.filter(
+      (item): item is StoreFactoryReadyItem => includeFilter(item as StoreFactoryReadyItem)
+    );
 
     whenReadyAndSlugIsHere.forEach(([storeSlug, handler]) => {
       withStoreFactory(storeSlug, handler);
     });
 
     globalThis.StoreManager.whenStoreFactoryReady = globalThis.StoreManager.whenStoreFactoryReady.filter(
-      (whenReadyPartialArgs: [string, (manager: StoreManagerType, storeFactory: Function) => void]) => !includeFilter(whenReadyPartialArgs)
+      item => !includeFilter(item as StoreFactoryReadyItem) // wtf? why I need the cast?
     );
   }
 }
