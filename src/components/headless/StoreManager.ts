@@ -40,7 +40,7 @@ interface StoreManagerType {
 }
  
 interface StoreManagerTypeHooks {
-  whenStoreFactoryReady: [string, (manager: StoreManagerType, storeFactory: Function) => void][];
+  whenStoreFactoryReady?: [string, (manager: StoreManagerType, storeFactory: Function) => void][];
 }
 
 
@@ -60,7 +60,7 @@ function executeWhenReady() {
       withStoreFactory(storeSlug, handler);
     });
 
-    globalThis.StoreManager.whenStoreFactoryReady = (globalThis as any).StoreManager.whenStoreFactoryReady.filter(
+    globalThis.StoreManager.whenStoreFactoryReady = globalThis.StoreManager.whenStoreFactoryReady.filter(
       (whenReadyPartialArgs: [string, (manager: StoreManagerType, storeFactory: Function) => void]) => !includeFilter(whenReadyPartialArgs)
     );
   }
@@ -68,7 +68,7 @@ function executeWhenReady() {
 
 executeWhenReady();
 
-(globalThis as any).StoreManager = {
-  ...(globalThis as any).StoreManager,
+globalThis.StoreManager = {
+  ...globalThis.StoreManager,
   ...manager,
 };
