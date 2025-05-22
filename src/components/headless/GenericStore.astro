@@ -8,7 +8,6 @@ const actualStore = Astro.props.storeFactory(Astro.props);
 const initialState = actualStore.init ? await actualStore?.init() : {
     ...Astro.props,
 };
-console.log("initialState", initialState);
 addStore(storeId, actualStore);
 
 ---
@@ -22,7 +21,6 @@ addStore(storeId, actualStore);
     globalThis.StoreManager = globalThis.StoreManager ?? {};
 
     const hydrateStore = (manager, storeFactory) => {
-        console.log("hydrateStore", manager, storeFactory);
         const actualStore = storeFactory(initialState);
         manager.addStore(storeId, actualStore);
     };

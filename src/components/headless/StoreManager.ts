@@ -7,7 +7,6 @@ export function getStore<R>(storeId: string & R): R {
 }
 
 export function registerStore(storeSlug: string, storeFactory: (...args: any[]) => any) {
-  console.log("registerStore", storeSlug, storeFactory);
   (globalThis as any).storeFactories = (globalThis as any).storeFactories ?? {};
   (globalThis as any).storeFactories[storeSlug] = storeFactory;
   executeWhenReady();
@@ -18,7 +17,6 @@ export function getStoreFactory(storeSlug: string) {
 }
 
 const withStoreFactory = (storeSlug: string, handler: (manager: any, storeFactory: any) => void) => {
-  console.log("withStoreFactory", storeSlug, handler);
   const actualStoreFactory = getStoreFactory(storeSlug);
   handler(manager, actualStoreFactory);
 }
@@ -35,15 +33,15 @@ const manager = {
 executeWhenReady();
 
 function executeWhenReady() {
-  console.log("executeWhenReady");
   if ((globalThis as any).StoreManager && Array.isArray((globalThis as any).StoreManager.whenStoreFactoryReady)) {
-    const whenReadyAndSlugIsHere = (globalThis as any).StoreManager.whenStoreFactoryReady.filter(([storeSlug]: [string]) => !!(globalThis as any).storeFactories?.[storeSlug]);
-
-    console.log("whenReadyAndSlugIsHere", whenReadyAndSlugIsHere.length);
+    const includeFilter = ([storeSlug]: [string]) => !!(globalThis as any).storeFactories?.[storeSlug];
+    const whenReadyAndSlugIsHere = (globalThis as any).StoreManager.whenStoreFactoryReady.filter(includeFilter);
 
     whenReadyAndSlugIsHere.forEach(([storeSlug, handler]: [string, (manager: any, storeFactory: any) => void]) => {
       withStoreFactory(storeSlug, handler);
     });
+
+    (globalThis as any).StoreManager.whenStoreFactoryReady = (globalThis as any).StoreManager.whenStoreFactoryReady.filter( (whenReadyPartialArgs: [string]) => !includeFilter(whenReadyPartialArgs) );
   }
 }
 
