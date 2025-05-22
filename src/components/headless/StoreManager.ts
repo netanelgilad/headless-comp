@@ -7,8 +7,10 @@ export function getStore<R>(storeId: string & R): R {
 }
 
 export function registerStore(storeSlug: string, storeFactory: (...args: any[]) => any) {
+  console.log("registerStore", storeSlug, storeFactory);
   (globalThis as any).storeFactories = (globalThis as any).storeFactories ?? {};
   (globalThis as any).storeFactories[storeSlug] = storeFactory;
+  executeWhenReady();
 }
 
 export function getStoreFactory(storeSlug: string) {
@@ -29,12 +31,24 @@ const manager = {
   withStoreFactory,
 }
 
-if ((globalThis as any).StoreManager && Array.isArray((globalThis as any).StoreManager.withStoreFactory)) {
-  (globalThis as any).StoreManager.withStoreFactory.forEach((args: any[]) => {
-    // @ts-expect-error
-    withStoreFactory(...args);
-  });
+
+executeWhenReady();
+
+function executeWhenReady() {
+  console.log("executeWhenReady");
+  if ((globalThis as any).StoreManager && Array.isArray((globalThis as any).StoreManager.whenStoreFactoryReady)) {
+    const whenReadyAndSlugIsHere = (globalThis as any).StoreManager.whenStoreFactoryReady.filter(([storeSlug]: [string]) => !!(globalThis as any).storeFactories?.[storeSlug]);
+
+    console.log("whenReadyAndSlugIsHere", whenReadyAndSlugIsHere.length);
+
+    whenReadyAndSlugIsHere.forEach(([storeSlug, handler]: [string, (manager: any, storeFactory: any) => void]) => {
+      withStoreFactory(storeSlug, handler);
+    });
+  }
 }
 
 
-(globalThis as any).StoreManager = manager;
+(globalThis as any).StoreManager = {
+  ...(globalThis as any).StoreManager,
+  ...manager,
+};

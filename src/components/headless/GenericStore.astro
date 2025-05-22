@@ -5,7 +5,10 @@ import { addStore } from "./StoreManager";
 const storeId = crypto.randomUUID();
 const storeSlug = Astro.props.storeSlug;
 const actualStore = Astro.props.storeFactory(Astro.props);
-const initialState = actualStore.init ? await actualStore?.init() : {};
+const initialState = actualStore.init ? await actualStore?.init() : {
+    ...Astro.props,
+};
+console.log("initialState", initialState);
 addStore(storeId, actualStore);
 
 ---
@@ -13,40 +16,37 @@ addStore(storeId, actualStore);
 <script is:inline define:vars={{
     storeId,
     storeSlug,
-    initialState,
+    initialStateString: JSON.stringify(initialState),
 }}>
-    console.log("GenericStore", storeId, storeSlug);
+    const initialState = JSON.parse(initialStateString);
     globalThis.StoreManager = globalThis.StoreManager ?? {};
-    console.log("globalThis.StoreManager", globalThis.StoreManager);
 
     const hydrateStore = (manager, storeFactory) => {
-        //const actualStore = storeFactory(initialState);
-        //manager.addStore(storeId, actualStore);
+        console.log("hydrateStore", manager, storeFactory);
+        const actualStore = storeFactory(initialState);
+        manager.addStore(storeId, actualStore);
     };
 
     if (typeof globalThis.StoreManager.withStoreFactory === "function") {
         globalThis.StoreManager.withStoreFactory(storeSlug, hydrateStore);
     } else if (Array.isArray(globalThis.StoreManager.withStoreFactory)) {
-        globalThis.StoreManager.withStoreFactory.push([storeSlug, hydrateStore]);
+        globalThis.StoreManager.whenStoreFactoryReady.push([storeSlug, hydrateStore]);
     } else {
-        globalThis.StoreManager.withStoreFactory = [[storeSlug, hydrateStore]];
+        globalThis.StoreManager.whenStoreFactoryReady = [[storeSlug, hydrateStore]];
     }
 
-    console.log("globalThis.StoreManager end", globalThis.StoreManager, globalThis.StoreManager.withStoreFactory);
 </script>
 <script>
     function capitalize(str: string) {
         return str.charAt(0).toUpperCase() + str.slice(1);
     }
 
-    if (Array.isArray(globalThis.StoreManager?.withStoreFactory)) {
-        console.log('globalThis.StoreManager.withStoreFactory', globalThis.StoreManager.withStoreFactory);
-        (globalThis.StoreManager.withStoreFactory as [string, Function][]).forEach(([storeSlug]) => {
-            import(`./ProductGallery/ProductGalleryStore.ts1`).then(module => {
-                console.log("!!!!!!!!!!!!module!!!!", module);
-            }, err => console.error("!!!!!!!!!!!!err!!!!", err));
+    if (Array.isArray(globalThis.StoreManager.whenStoreFactoryReady)) {
+        globalThis.StoreManager.whenStoreFactoryReady.forEach(([storeSlug]) => {
+            import(`./ProductGallery/${capitalize(storeSlug)}Store.ts`);
         });
     }
+
 </script>
 
 <Fragment>

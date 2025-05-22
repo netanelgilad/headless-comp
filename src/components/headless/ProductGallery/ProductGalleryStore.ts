@@ -10,7 +10,6 @@ export type ProductGalleryStoreInput = {
 
 export function createProductGalleryStore(input: any) {
     console.log("createProductGalleryStore", input);
-    debugger;
     const { media } = input;
     const $imageIndex = atom<number>(0);
     
