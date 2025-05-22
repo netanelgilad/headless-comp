@@ -15,9 +15,8 @@ addStore(storeId, actualStore);
 <script is:inline define:vars={{
     storeId,
     storeSlug,
-    initialStateString: JSON.stringify(initialState),
+    initialState,
 }}>
-    const initialState = JSON.parse(initialStateString);
     globalThis.StoreManager = globalThis.StoreManager ?? {};
 
     const hydrateStore = (manager, storeFactory) => {
@@ -41,6 +40,7 @@ addStore(storeId, actualStore);
 
     if (Array.isArray(globalThis.StoreManager.whenStoreFactoryReady)) {
         globalThis.StoreManager.whenStoreFactoryReady.forEach(([storeSlug]) => {
+            // We'll have a convetion for the store location?
             import(`./ProductGallery/${capitalize(storeSlug)}Store.ts`);
         });
     }
