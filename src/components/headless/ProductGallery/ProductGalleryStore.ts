@@ -5,10 +5,12 @@ import { getStore, registerStore } from "../StoreManager";
 
 export type ProductGalleryStoreInput = {
     media: NonNullable<products.Product['media']>,
-    selectedVariantStoreId: string & ReturnType<typeof createSelectedVariantStore>
+    dependantStoreIds: {
+        selectedVariantStoreId: string & ReturnType<typeof createSelectedVariantStore>
+    }
 };
 
-export function createProductGalleryStore(input: any) {
+export function createProductGalleryStore(input: ProductGalleryStoreInput) {
     const { media } = input;
     const $imageIndex = atom<number>(0);
     
