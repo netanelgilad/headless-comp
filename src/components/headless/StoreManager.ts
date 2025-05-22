@@ -1,24 +1,26 @@
 export function addStore(storeId: string, something: unknown) {
-  (globalThis as any).stores = (globalThis as any).stores ?? {};
-  (globalThis as any).stores[storeId] = something;
+  globalThis.stores = globalThis.stores ?? {};
+  globalThis.stores[storeId] = something;
 }
 export function getStore<R>(storeId: string & R): R {
-  return (globalThis as any).stores?.[storeId];
+  return globalThis.stores?.[storeId] as R;
 }
 
 export function registerStore(storeSlug: string, storeFactory: (...args: any[]) => any) {
-  (globalThis as any).storeFactories = (globalThis as any).storeFactories ?? {};
-  (globalThis as any).storeFactories[storeSlug] = storeFactory;
+  globalThis.storeFactories = globalThis.storeFactories ?? {};
+  globalThis.storeFactories[storeSlug] = storeFactory;
   executeWhenReady();
 }
 
 export function getStoreFactory(storeSlug: string) {
-  return (globalThis as any).storeFactories?.[storeSlug];
+  return globalThis.storeFactories?.[storeSlug];
 }
 
-const withStoreFactory = (storeSlug: string, handler: (manager: any, storeFactory: any) => void) => {
+const withStoreFactory = (storeSlug: string, handler: (manager: StoreManagerType, storeFactory: Function) => void) => {
   const actualStoreFactory = getStoreFactory(storeSlug);
-  handler(manager, actualStoreFactory);
+  if (actualStoreFactory) {
+    handler(manager, actualStoreFactory);
+  }
 }
 
 const manager = {
@@ -29,22 +31,42 @@ const manager = {
   withStoreFactory,
 }
 
+interface StoreManagerType {
+  addStore: typeof addStore;
+  getStore: typeof getStore;
+  registerStore: typeof registerStore;
+  getStoreFactory: typeof getStoreFactory;
+  withStoreFactory: typeof withStoreFactory;
+}
+ 
+interface StoreManagerTypeHooks {
+  whenStoreFactoryReady: [string, (manager: StoreManagerType, storeFactory: Function) => void][];
+}
 
-executeWhenReady();
+
+declare global {
+  var StoreManager: StoreManagerType & StoreManagerTypeHooks | undefined;
+  var storeFactories: Record<string, Function> | undefined;
+  var stores: Record<string, unknown> | undefined;
+}
+
 
 function executeWhenReady() {
-  if ((globalThis as any).StoreManager && Array.isArray((globalThis as any).StoreManager.whenStoreFactoryReady)) {
-    const includeFilter = ([storeSlug]: [string]) => !!(globalThis as any).storeFactories?.[storeSlug];
-    const whenReadyAndSlugIsHere = (globalThis as any).StoreManager.whenStoreFactoryReady.filter(includeFilter);
+  if (globalThis.StoreManager && Array.isArray(globalThis.StoreManager.whenStoreFactoryReady)) {
+    const includeFilter = ([storeSlug, _]: [string, (manager: StoreManagerType, storeFactory: Function) => void]) => !!globalThis.storeFactories?.[storeSlug];
+    const whenReadyAndSlugIsHere = globalThis.StoreManager.whenStoreFactoryReady.filter(includeFilter);
 
-    whenReadyAndSlugIsHere.forEach(([storeSlug, handler]: [string, (manager: any, storeFactory: any) => void]) => {
+    whenReadyAndSlugIsHere.forEach(([storeSlug, handler]) => {
       withStoreFactory(storeSlug, handler);
     });
 
-    (globalThis as any).StoreManager.whenStoreFactoryReady = (globalThis as any).StoreManager.whenStoreFactoryReady.filter( (whenReadyPartialArgs: [string]) => !includeFilter(whenReadyPartialArgs) );
+    globalThis.StoreManager.whenStoreFactoryReady = (globalThis as any).StoreManager.whenStoreFactoryReady.filter(
+      (whenReadyPartialArgs: [string, (manager: StoreManagerType, storeFactory: Function) => void]) => !includeFilter(whenReadyPartialArgs)
+    );
   }
 }
 
+executeWhenReady();
 
 (globalThis as any).StoreManager = {
   ...(globalThis as any).StoreManager,
