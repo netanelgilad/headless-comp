@@ -1,20 +1,22 @@
 import { atom, computed, onMount } from "nanostores";
 import { products } from "@wix/stores";
 import type { createSelectedVariantStore } from "../VariantSelector/VariantSelectorStore";
-import { getStore } from "../StoreManager";
+import { getStore, registerStore } from "../StoreManager";
 
 export type ProductGalleryStoreInput = {
     media: NonNullable<products.Product['media']>,
-    selectedVariantStoreId: string & ReturnType<typeof createSelectedVariantStore>
+    dependantStoreIds: {
+        selectedVariantStoreId: string & ReturnType<typeof createSelectedVariantStore>
+    }
 };
 
 export function createProductGalleryStore(input: ProductGalleryStoreInput) {
-    const { media, selectedVariantStoreId } = input;
+    const { media } = input;
     const $imageIndex = atom<number>(0);
     
-    const { input: selectedVariantStoreInput } = getStore(selectedVariantStoreId);
+    const { input: selectedVariantStoreInput } = getStore(input.dependantStoreIds.selectedVariantStoreId);
     onMount($imageIndex, () => {
-        return getStore(selectedVariantStoreId).$selectedOptions.subscribe(selectedOptions => {
+        return getStore(input.dependantStoreIds.selectedVariantStoreId).$selectedOptions.subscribe(selectedOptions => {
             Object.entries(selectedOptions).find(([key, value]) => {
                 const productOption = selectedVariantStoreInput.productOptions!.find(productOption => productOption.name === key);
 
@@ -59,3 +61,5 @@ export function createProductGalleryStore(input: ProductGalleryStoreInput) {
         getImageByIndex: (index: number) => media.items![index]
     }
 }
+
+registerStore("productGallery", createProductGalleryStore);

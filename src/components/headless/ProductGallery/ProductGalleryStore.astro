@@ -5,39 +5,21 @@ import {
     type ProductGalleryStoreInput,
 } from "../ProductGallery/ProductGalleryStore";
 import { getSelectedVariantStoreId } from "../VariantSelector/VariantSelectorContext";
-import { addStore } from "../StoreManager";
+import GenericStore from "../GenericStore.astro";
 
-type Props = Omit<ProductGalleryStoreInput, "selectedVariantStoreId">;
+type Props = Omit<ProductGalleryStoreInput, "dependantStoreIds">;
 
-const storeId = crypto.randomUUID();
 const selectedVariantStoreId = getSelectedVariantStoreId();
-const input = {
-    ...Astro.props,
-    selectedVariantStoreId,
-};
-const productGalleryStore = createProductGalleryStore(input);
-addStore(storeId, productGalleryStore);
 ---
 
-<product-gallery-store
-    data-id={storeId}
-    data-initial-state={JSON.stringify(input)}></product-gallery-store>
-<script>
-    import { createProductGalleryStore } from "./ProductGalleryStore";
-    import { addStore } from "../StoreManager";
-
-    class ProductGalleryStore extends HTMLElement {
-        constructor() {
-            super();
-            const productGalleryStore = createProductGalleryStore(
-                JSON.parse(this.dataset.initialState!),
-            );
-            addStore(this.dataset.id!, productGalleryStore);
-        }
+<GenericStore
+    {...Astro.props}
+    storeSlug="productGallery"
+    storeFactory={createProductGalleryStore}
+    dependantStoreIds={{ selectedVariantStoreId }}>
+    {(storeId: string) =>
+        <ProductGalleryContext storeId={storeId}>
+            {Astro.slots.render("default", [storeId])}
+        </ProductGalleryContext>
     }
-
-    customElements.define("product-gallery-store", ProductGalleryStore);
-</script>
-<ProductGalleryContext storeId={storeId}>
-    {Astro.slots.render("default", [storeId])}
-</ProductGalleryContext>
+</GenericStore>
