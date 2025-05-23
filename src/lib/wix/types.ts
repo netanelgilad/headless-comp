@@ -1,12 +1,12 @@
 import type { products } from "@wix/stores";
 
-export type Maybe<T> = T | null;
+type Maybe<T> = T | null;
 
-export type Connection<T> = {
+type Connection<T> = {
   edges: Array<Edge<T>>;
 };
 
-export type Edge<T> = {
+type Edge<T> = {
   node: T;
 };
 
@@ -22,14 +22,14 @@ export type Cart = {
   totalQuantity: number;
 };
 
-export type CartProduct = {
+type CartProduct = {
   id: string;
   handle: string;
   title: string;
   featuredImage: Image;
 };
 
-export type CartItem = {
+type CartItem = {
   id: string;
   quantity: number;
   cost: {
@@ -55,7 +55,7 @@ export type Collection = {
   path: string;
 };
 
-export type Image = {
+type Image = {
   url: string;
   altText: string;
   width: number;
@@ -67,7 +67,7 @@ export type Menu = {
   path: string;
 };
 
-export type Money = {
+type Money = {
   amount: string;
   currencyCode: string;
 };
@@ -104,13 +104,13 @@ export type Product = {
   originalProduct: products.Product;
 };
 
-export type ProductOption = {
+type ProductOption = {
   id: string;
   name: string;
   values: string[];
 };
 
-export type ProductVariant = {
+type ProductVariant = {
   id: string;
   title: string;
   availableForSale: boolean;
@@ -121,7 +121,7 @@ export type ProductVariant = {
   price: Money;
 };
 
-export type SEO = {
+type SEO = {
   title: string;
   description: string;
 };

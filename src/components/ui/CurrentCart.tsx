@@ -98,7 +98,7 @@ export const CurrentCartModalClose = (
   </CurrentCartModalClosePrimitive>
 );
 
-export const CurrentCartRemoveLineItemButton = (
+const CurrentCartRemoveLineItemButton = (
   props: Omit<
     React.ComponentProps<typeof CurrentCartRemoveLineItemTriggerPrimitive>,
     "children"
@@ -230,7 +230,7 @@ export const CurrentCartLineItems = (
   </CurrentCartLineItemsPrimitive>
 );
 
-export const CurrentCartIncreaseItemQuantityButton = (
+const CurrentCartIncreaseItemQuantityButton = (
   props: Omit<
     React.ComponentProps<
       typeof CurrentCartIncreaseItemQuantityTriggerPrimitive
@@ -251,7 +251,7 @@ export const CurrentCartIncreaseItemQuantityButton = (
   </CurrentCartIncreaseItemQuantityTriggerPrimitive>
 );
 
-export const CurrentCartDecreaseItemQuantityButton = (
+const CurrentCartDecreaseItemQuantityButton = (
   props: Omit<
     React.ComponentProps<
       typeof CurrentCartDecreaseItemQuantityTriggerPrimitive
@@ -272,7 +272,7 @@ export const CurrentCartDecreaseItemQuantityButton = (
   </CurrentCartDecreaseItemQuantityTriggerPrimitive>
 );
 
-export const CurrentCartLineItemPrice = (
+const CurrentCartLineItemPrice = (
   props: Omit<
     React.ComponentProps<typeof CurrentCartLineItemPricePrimitive>,
     "children"

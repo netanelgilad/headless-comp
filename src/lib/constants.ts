@@ -20,7 +20,3 @@ export const sorting: SortFilterItem[] = [
   { title: 'Price: Low to high', slug: 'price-asc', sortKey: 'price', reverse: false }, // asc
   { title: 'Price: High to low', slug: 'price-desc', sortKey: 'price', reverse: true }
 ];
-
-export const HIDDEN_PRODUCT_TAG = 'nextjs-frontend-hidden';
-export const DEFAULT_OPTION = 'Default Title';
-export const WIX_SESSION_COOKIE = 'wix-session';

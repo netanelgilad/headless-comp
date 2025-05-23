@@ -1,0 +1,10 @@
+{
+  "$schema": "https://unpkg.com/knip@5/schema.json",
+  "entry": [
+    "src/directives/wait-for-store.ts"
+  ],
+  "ignore": [
+    "src/env.d.ts",
+    "postcss.config.mjs"
+  ]
+} 
