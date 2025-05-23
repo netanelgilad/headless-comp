@@ -19,12 +19,9 @@ export function createSelectedVariantStore(input: SelectedVariantStoreInput) {
         input,
         $selectedOptions,
         $isAvailableForSale: computed($selectedOptions,(selectedOptions) => {
-            console.log('selectedOptions', selectedOptions);
             const variant = variants.find(variant => 
                 variant.selectedOptions.every(({name, value}) => selectedOptions[name!] === value)
             );
-
-            console.log(variant, selectedOptions);
 
             return variant?.availableForSale;
         }),
