@@ -26,5 +26,32 @@ export function createCurrentCartStore(opts: {
         close: () => {
             $isOpen.set(false);
         },
+        removeLineItem: async (lineItemId: string) => {
+            const { cart } = await currentCart.removeLineItemsFromCurrentCart([lineItemId]);
+            $cart.set(cart!);
+        },
+        updateLineItemQuantity: async (lineItemId: string, quantity: number) => {
+            const { cart } = await currentCart.updateCurrentCartLineItemQuantity([{
+                _id: lineItemId,
+                quantity,
+            }]);
+            $cart.set(cart!);
+        },
+        increaseLineItemQuantity: async (lineItemId: string) => {
+            const currentQuantity = $cart.get()?.lineItems?.find(item => item._id === lineItemId)?.quantity ?? 0;
+            const { cart } = await currentCart.updateCurrentCartLineItemQuantity([{
+                _id: lineItemId,
+                quantity: currentQuantity + 1,
+            }]);
+            $cart.set(cart!);
+        },
+        decreaseLineItemQuantity: async (lineItemId: string) => {
+            const currentQuantity = $cart.get()?.lineItems?.find(item => item._id === lineItemId)?.quantity ?? 0;
+            const { cart } = await currentCart.updateCurrentCartLineItemQuantity([{
+                _id: lineItemId,
+                quantity: currentQuantity - 1,
+            }]);
+            $cart.set(cart!);
+        },
     }
 }
