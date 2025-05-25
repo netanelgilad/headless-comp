@@ -17,20 +17,30 @@ addStore(storeId, actualStore);
     storeSlug,
     initialState,
 }}>
+    // Ensure StoreManager and its queue exist
     globalThis.StoreManager = globalThis.StoreManager ?? {};
+    globalThis.StoreManager.whenStoreFactoryReady = globalThis.StoreManager.whenStoreFactoryReady ?? [];
 
-    const hydrateStore = (manager, storeFactory) => {
-        console.log(`GenericStore: hydrateStore`, storeId, storeSlug, initialState);
-        const actualStore = storeFactory(initialState);
-        manager.addStore(storeId, actualStore);
+    const task = {
+        storeId: storeId,
+        storeSlug: storeSlug,
+        initialState: initialState, // This should contain 'dependantStoreIds' if any
+        handler: (manager, storeFactory) => {
+            // This function is the 'hydrateStore' logic
+            console.log(`StoreManager: Hydrating client store: ${storeId} (slug: ${storeSlug})`);
+            const actualStoreInstance = storeFactory(initialState); // initialState is from closure
+            manager.addStore(storeId, actualStoreInstance); // storeId is from closure
+        }
     };
 
-    if (typeof globalThis.StoreManager.withStoreFactory === "function") {
-        globalThis.StoreManager.withStoreFactory(storeSlug, hydrateStore);
-    } else if (Array.isArray(globalThis.StoreManager.whenStoreFactoryReady)) {
-        globalThis.StoreManager.whenStoreFactoryReady.push([storeSlug, hydrateStore]);
-    } else {
-        globalThis.StoreManager.whenStoreFactoryReady = [[storeSlug, hydrateStore]];
+    globalThis.StoreManager.whenStoreFactoryReady.push(task);
+
+    // If StoreManager is already fully initialized, give executeWhenReady a nudge.
+    // Otherwise, the initial call in StoreManager.ts or calls from registerStore/addStore will handle it.
+    if (globalThis.StoreManager.executeWhenReady) {
+        queueMicrotask(() => { // Defer execution slightly
+            globalThis.StoreManager.executeWhenReady();
+        });
     }
 
     console.log(`GenericStore: StoreManager`, globalThis.StoreManager);
@@ -41,10 +51,10 @@ addStore(storeId, actualStore);
     }
 
     if (Array.isArray(globalThis.StoreManager.whenStoreFactoryReady)) {
-        globalThis.StoreManager.whenStoreFactoryReady.forEach(([storeSlug]) => {
+        globalThis.StoreManager.whenStoreFactoryReady.forEach((task) => {
             // We'll have a convetion for the store location?
-            console.log(`GenericStore: import`, `./ProductGallery/${capitalize(storeSlug)}Store.ts`);
-            import(`./ProductGallery/${capitalize(storeSlug)}Store.ts`);
+            console.log(`GenericStore: import`, `./ProductGallery/${capitalize(task.storeSlug)}Store.ts`);
+            import(`./ProductGallery/${capitalize(task.storeSlug)}Store.ts`);
         });
     }
 

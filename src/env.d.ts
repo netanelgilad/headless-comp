@@ -9,9 +9,14 @@ declare module 'astro' {
 }
 
 import type { Host } from '@wix/sdk-types';
+import type { IStoreManager, StoreManagerHooks } from './components/headless/StoreManager';
 
 declare global {
   interface ContextualClient {
     host: Host;
   }
+
+  var StoreManager: (IStoreManager & Required<StoreManagerHooks>) | undefined;
+  var storeFactories: Record<string, Function> | undefined;
+  var stores: Record<string, unknown> | undefined;
 }
