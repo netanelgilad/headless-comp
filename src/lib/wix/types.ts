@@ -1,8 +1,8 @@
 import type { products } from "@wix/stores";
 
-type Maybe<T> = T | null;
+export type Maybe<T> = T | null;
 
-type Connection<T> = {
+export type Connection<T> = {
   edges: Array<Edge<T>>;
 };
 

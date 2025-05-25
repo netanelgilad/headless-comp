@@ -1,17 +1,17 @@
 ---
 import type { products } from "@wix/stores";
-import { addStore } from "../StoreManager";
 import { SelectedVariantStoreContext } from "./VariantSelectorContext";
-import { createSelectedVariantStore } from "./VariantSelectorStore";
+import { createSelectedVariantStore, type SelectedVariantStoreInput } from "../stores/SelectedVariantStore";
 import { getCurrentCartStoreId } from "../CurrentCart/CurrentCartContext";
+import GenericStore from "../GenericStore.astro";
 
 type Props = {
-    product: products.Product,
+    product: products.Product;
 };
 
-const storeId = crypto.randomUUID();
 const currentCartStoreId = getCurrentCartStoreId();
-const storeInput = {
+
+const storeInput: SelectedVariantStoreInput = {
     productOptions: Astro.props.product.productOptions!,
     manageVariants: Astro.props.product.manageVariants!,
     variants: Astro.props.product.variants ?? [],
@@ -20,31 +20,16 @@ const storeInput = {
     stock: Astro.props.product.stock!,
     _id: Astro.props.product._id!,
     currentCartStoreId,
-}
-
-const selectedVariantStore = createSelectedVariantStore(storeInput);
-addStore(storeId, selectedVariantStore);
+};
 ---
 
-<variant-selector
-    data-id={storeId}
-    data-initial-state={JSON.stringify(storeInput)}></variant-selector>
-<script>
-    import { createSelectedVariantStore } from "./VariantSelectorStore";
-    import { addStore } from "../StoreManager";
-
-    class VariantSelector extends HTMLElement {
-        constructor() {
-            super();
-            const selectedVariantStore = createSelectedVariantStore(
-                JSON.parse(this.dataset.initialState!),
-            );
-            addStore(this.dataset.id!, selectedVariantStore);
-        }
+<GenericStore
+    {...storeInput}
+    storeSlug="selectedVariant"
+    storeFactory={createSelectedVariantStore}>
+    {(storeId: string) =>
+        <SelectedVariantStoreContext storeId={storeId}>
+            <slot />
+        </SelectedVariantStoreContext>
     }
-
-    customElements.define("variant-selector", VariantSelector);
-</script>
-<SelectedVariantStoreContext storeId={storeId}>
-    <slot />
-</SelectedVariantStoreContext>
+</GenericStore>

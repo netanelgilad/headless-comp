@@ -1,12 +1,10 @@
 ---
 import { currentCart } from "@wix/ecom";
-import { addStore } from "../StoreManager";
 import { CurrentCartContext } from "./CurrentCartContext";
-import { createCurrentCartStore } from "./CurrentCartStore";
+import { createCurrentCartStore } from "../stores/CurrentCartStore";
+import GenericStore from "../GenericStore.astro";
 
 type Props = {};
-
-const storeId = crypto.randomUUID();
 
 let initialCart:
     | (currentCart.Cart & currentCart.CartNonNullableFields)
@@ -24,30 +22,15 @@ try {
 const initialState = {
     initialCart,
 };
-
-const currentCartStore = createCurrentCartStore(initialState);
-addStore(storeId, currentCartStore);
 ---
 
-<current-cart
-    data-id={storeId}
-    data-initial-state={JSON.stringify(initialState)}></current-cart>
-<script>
-    import { createCurrentCartStore } from "./CurrentCartStore";
-    import { addStore } from "../StoreManager";
-
-    class VariantSelector extends HTMLElement {
-        constructor() {
-            super();
-            const currentCartStore = createCurrentCartStore(
-                JSON.parse(this.dataset.initialState!),
-            );
-            addStore(this.dataset.id!, currentCartStore);
-        }
+<GenericStore
+    {...initialState}
+    storeSlug="currentCart"
+    storeFactory={createCurrentCartStore}>
+    {(storeId: string) =>
+        <CurrentCartContext storeId={storeId}>
+            <slot />
+        </CurrentCartContext>
     }
-
-    customElements.define("current-cart", VariantSelector);
-</script>
-<CurrentCartContext storeId={storeId}>
-    <slot />
-</CurrentCartContext>
+</GenericStore>

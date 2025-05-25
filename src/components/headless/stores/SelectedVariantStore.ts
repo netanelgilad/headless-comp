@@ -1,8 +1,8 @@
 import type { products } from "@wix/stores";
 import { atom, computed } from "nanostores";
-import type { createCurrentCartStore } from "../CurrentCart/CurrentCartStore";
-import { getStore } from "../StoreManager";
-import { getVariants } from "./VariantSelector";
+import type { createCurrentCartStore } from "./CurrentCartStore";
+import { getStore, registerStore } from "../StoreManager";
+import { getVariants } from "../VariantSelector/VariantSelector";
 
 export type SelectedVariantStoreInput = 
     Pick<products.Product, 
@@ -44,3 +44,5 @@ export function createSelectedVariantStore(input: SelectedVariantStoreInput) {
         }
     }
 }
+
+registerStore("selectedVariant", createSelectedVariantStore);

@@ -1,0 +1,65 @@
+---
+import { addStore } from "./StoreManager";
+
+
+const storeId = crypto.randomUUID();
+const storeSlug = Astro.props.storeSlug;
+const actualStore = Astro.props.storeFactory(Astro.props);
+const initialState = actualStore.init ? await actualStore?.init() : {
+    ...Astro.props,
+};
+addStore(storeId, actualStore);
+
+---
+
+<script is:inline define:vars={{
+    storeId,
+    storeSlug,
+    initialState,
+}}>
+    // Ensure StoreManager and its queue exist
+    globalThis.StoreManager = globalThis.StoreManager ?? {};
+    globalThis.StoreManager.whenStoreFactoryReady = globalThis.StoreManager.whenStoreFactoryReady ?? [];
+
+    const task = {
+        storeId: storeId,
+        storeSlug: storeSlug,
+        initialState: initialState, // This should contain 'dependantStoreIds' if any
+        handler: (manager, storeFactory) => {
+            // This function is the 'hydrateStore' logic
+            console.log(`StoreManager: Hydrating client store: ${storeId} (slug: ${storeSlug})`);
+            const actualStoreInstance = storeFactory(initialState); // initialState is from closure
+            manager.addStore(storeId, actualStoreInstance); // storeId is from closure
+        }
+    };
+
+    globalThis.StoreManager.whenStoreFactoryReady.push(task);
+
+    // If StoreManager is already fully initialized, give executeWhenReady a nudge.
+    // Otherwise, the initial call in StoreManager.ts or calls from registerStore/addStore will handle it.
+    if (globalThis.StoreManager.executeWhenReady) {
+        queueMicrotask(() => { // Defer execution slightly
+            globalThis.StoreManager.executeWhenReady();
+        });
+    }
+
+    console.log(`GenericStore: StoreManager`, globalThis.StoreManager);
+</script>
+<script>
+    function capitalize(str: string) {
+        return str.charAt(0).toUpperCase() + str.slice(1);
+    }
+
+    if (Array.isArray(globalThis.StoreManager.whenStoreFactoryReady)) {
+        globalThis.StoreManager.whenStoreFactoryReady.forEach((task) => {
+            // We'll have a convetion for the store location?
+            console.log(`GenericStore: import`, `./stores/${capitalize(task.storeSlug)}Store.ts`);
+            import(`./stores/${capitalize(task.storeSlug)}Store.ts`);
+        });
+    }
+
+</script>
+
+<Fragment>
+    {Astro.slots.render("default", [storeId])}
+</Fragment>

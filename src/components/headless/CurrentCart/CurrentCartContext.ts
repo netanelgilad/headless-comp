@@ -1,5 +1,5 @@
 import { createContext } from "../Context";
-import type { createCurrentCartStore } from "./CurrentCartStore";
+import type { createCurrentCartStore } from "../stores/CurrentCartStore";
 
 const [ Provider, getContext ] = createContext<{ storeId: string }>()
 

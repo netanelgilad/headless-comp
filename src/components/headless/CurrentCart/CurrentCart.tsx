@@ -1,6 +1,6 @@
 import { useStore } from "@nanostores/react";
 import { getStore } from "../StoreManager";
-import { createCurrentCartStore } from "./CurrentCartStore";
+import { createCurrentCartStore } from "../stores/CurrentCartStore";
 import type { currentCart } from "@wix/ecom";
 
 export function CurrentCartIcon(props: {
