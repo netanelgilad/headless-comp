@@ -29,6 +29,9 @@ const initialState = {
     storeSlug="currentCart"
     storeFactory={createCurrentCartStore}>
     {(storeId: string) =>
+        <script>
+            import "../stores/CurrentCartStore";
+        </script>
         <CurrentCartContext storeId={storeId}>
             <slot />
         </CurrentCartContext>

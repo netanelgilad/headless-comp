@@ -28,6 +28,9 @@ const storeInput: SelectedVariantStoreInput = {
     storeSlug="selectedVariant"
     storeFactory={createSelectedVariantStore}>
     {(storeId: string) =>
+        <script>
+            import "../stores/SelectedVariantStore";
+        </script>
         <SelectedVariantStoreContext storeId={storeId}>
             <slot />
         </SelectedVariantStoreContext>

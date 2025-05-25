@@ -45,20 +45,6 @@ addStore(storeId, actualStore);
 
     console.log(`GenericStore: StoreManager`, globalThis.StoreManager);
 </script>
-<script>
-    function capitalize(str: string) {
-        return str.charAt(0).toUpperCase() + str.slice(1);
-    }
-
-    if (Array.isArray(globalThis.StoreManager.whenStoreFactoryReady)) {
-        globalThis.StoreManager.whenStoreFactoryReady.forEach((task) => {
-            // We'll have a convetion for the store location?
-            console.log(`GenericStore: import`, `./stores/${capitalize(task.storeSlug)}Store.ts`);
-            import(`./stores/${capitalize(task.storeSlug)}Store.ts`);
-        });
-    }
-
-</script>
 
 <Fragment>
     {Astro.slots.render("default", [storeId])}

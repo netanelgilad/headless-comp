@@ -18,6 +18,9 @@ const selectedVariantStoreId = getSelectedVariantStoreId();
     storeFactory={createProductGalleryStore}
     dependantStoreIds={{ selectedVariantStoreId }}>
     {(storeId: string) =>
+        <script>
+            import "../stores/ProductGalleryStore";
+        </script>
         <ProductGalleryContext storeId={storeId}>
             {Astro.slots.render("default", [storeId])}
         </ProductGalleryContext>
