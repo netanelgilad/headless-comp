@@ -233,7 +233,7 @@ export async function updateCart(
   return reshapeCart(cart!);
 }
 
-async function getCart(): Promise<Cart | undefined> {
+export async function getCart(): Promise<Cart | undefined> {
   try {
     const cart = await currentCart.getCurrentCart();
 
@@ -246,7 +246,7 @@ async function getCart(): Promise<Cart | undefined> {
   }
 }
 
-async function getCollection(
+export async function getCollection(
   handle: string
 ): Promise<Collection | undefined> {
   try {
@@ -399,7 +399,7 @@ export async function getPage(handle: string): Promise<Page | undefined> {
   };
 }
 
-async function getPages(): Promise<Page[]> {
+export async function getPages(): Promise<Page[]> {
   const { items: pages } = await items
     .queryDataItems({
       dataCollectionId: "Pages2",
